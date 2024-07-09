@@ -24,6 +24,20 @@ app.get("/", async (req, res) => {
   });
 });
 
+app.post("/add", async (req, res) => {
+  let country = req.body["country"];
+  
+  const country_code = await pool.query("select country_code from countries where country_name = $1", [country])
+
+  if (country_code.rowCount != 0)
+  {
+    await pool.query("insert into visited_countries (country_code) VALUES ($1)", [country_code.rows[0].country_code]);
+    
+    res.redirect("/");
+  }
+
+})
+
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on Port number: ${port}`);
 });
